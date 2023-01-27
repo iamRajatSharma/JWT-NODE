@@ -7,7 +7,7 @@ app.post("/login", UserController.doLogin)
 
 app.post("/register", UserController.doRegister)
 
-app.get("/login", UserController.login)
+app.get("/", UserController.login)
 
 app.get("/register", UserController.register)
 
