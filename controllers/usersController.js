@@ -13,6 +13,13 @@ const register = (req, res) => {
     res.render("Register")
 }
 
+const dashboard = (req, res) => {
+    if (req.session.token == "undefined") {
+        return res.render("index")
+    }
+    return res.render("dashboard", { "name": req.session.user.name })
+}
+
 const doLogin = async (req, res) => {
     const { email, password } = req.body
     try {
@@ -27,7 +34,9 @@ const doLogin = async (req, res) => {
             return res.status(400).json({ "message": "Invalid Credentials" })
         }
         const token = jwt.sign({ email: checkUserExists.email, id: checkUserExists._id }, SECRET);
-        res.status(201).json({ user: checkUserExists, token: token })
+        req.session.token = token
+        req.session.user = checkUserExists
+        return res.redirect("dashboard")
     }
     catch (error) {
         console.log(error)
@@ -58,10 +67,6 @@ const doRegister = async (req, res) => {
         console.log(error)
         res.status(500).json({ error: error })
     }
-}
-
-const dashboard = (authUser, req, res) => {
-    res.send({"message":"Success"})
 }
 
 module.exports = {
